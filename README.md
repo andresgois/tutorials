@@ -14,3 +14,6 @@
 ## Configurações AWS
 [Documentação AWS](./AWS.md)
 
+## Docker
+[Docker](./Docker.md)
+
