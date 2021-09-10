@@ -866,7 +866,85 @@ USERS		ROLES
 		- Interface State 
 			- Terminate
 			- yes terminate
-	
+
+### Subindo Ubuntu
+- No Console
+#### 1 - Criar uma chave para acessar a máquina
+- Menu
+- Rede e segurança
+- Pares de chave
+	- Selecionar Região
+	- Criar par de chaves
+		- nome
+		- pem
+			- Para Mac e Linux
+		- ppk
+			- Windows
+		- Criar par de chaves
+	- salva no seu PC
+#### 2 - Grupo de segurança
+- Menu
+- Redes e segurança
+- Grupos de segurança
+	- Criar grupo de segurança
+	- nome
+	- descrição
+	- adiciona regras de entrada
+		- Intervalo de Portas
+			- 22
+			- 80
+			- 443
+		- Origem
+			- Meu IP
+			- Qualquer um
+			- Qualquer lugar
+	- Criar grupo
+#### 3 - IP Elastic (IP FIXO)
+- Menu
+- Rede e segurança
+- Elastic IPs
+	- Alocar endereço elastico
+	- Alocar
+	- Ações
+		- Associar endereço IP Elástico
+			- Selecione a máquina
+			- Associar
+- Detalhe: Colocar TAG na Instância
+
+#### 4 - Cria a máquina
+- Menu
+- Instâncias
+	- Launch Instances
+	- Ubuntu **Free tier**
+	- Next
+	- Next
+	- Tag Next
+	- Step 6: Configure Securiry Group
+		- Select an existing security group
+		- selecione o grupo que você criou
+	- next 
+	- Launch
+	- Choose an existing key pair
+	- chave que você criou
+	- Launch Instances
+- [Baixar o PuttY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)
+	- Host name
+		- ubuntu@ip_copiado 
+	- nome para a session
+	- save
+	- Connection	
+		- SSH
+			- Auth
+				- Browser
+				- Escolhe a chave que você criou e baixou
+	- Save 
+	- Open
+##### Exemplo
+- Instalar o nginx
+- sudo apt-get install nginx
+- yes
+- acesso pelo ip no navegador
+
 ## Banco de Dados
 
 ### Principais
