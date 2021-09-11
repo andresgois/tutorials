@@ -133,3 +133,126 @@ VALUES
 - docker run -dti --mount type=volume,src=teste,dst=teste debian
 - docker volume rm teste
 
+### Tipos de mount na prática
+#### MOUNT
+- docker conteiner run --help
+- docker run -dti --mount type=bind,src=/data/debian-A,dst=/data debian
+    - src: caminho na sua máquina
+    - dst: caminho no conteiner
+- docker exec -ti nome_imagem bash
+    - cd /data
+    - touch file.txt
+    - pronto, arquivo criado dentro do conteiner
+    - se olhar na máquina host no caminho especificado, estará lá o arquivo que foi criado no conteiner
+- criando arquivo somente leitura
+    - docker run -dti --mount type=bind,src=/data/debian-A,dst=/data,ro debian
+
+#### VOLUME
+- docker volume ls
+- docker volume create data-debian
+- este arquivo é criado na pasta padrão do docker, em: /var/lib/docker/
+- *Montar volume dentro do conteiner*
+    - docker run -dti --name debian_container --mount type=volume,src=nome-do-volume,dst=/data debian
+    - docker exec -ti debian_container bash
+    - cd /data
+    - touch file3.txt
+
+# Subindo imagens
+<details>
+<summary> MongoDB </summary>
+
+### MongoDB
+
+#### Baixando imagem
+> docker pull mongo:4.2-bionic
+
+#### Executando o mongo
+> docker container run --name mongodb -p 27017:27017 -d mongo:4.2-bionic --auth
+
+#### Entrando no container
+> docker container exec -it mongodb mongo admin
+	
+#### Comandos: 
+> show dbs
+> use local
+> show collections
+> use pagamentos
+**--auth - ainda vai criar a autenticação pra ele**
+
+#### Para criar usuário root: 
+> db.createUser({ user: "root", pwd: "123456", roles: [{ role: "userAdminAnyDatabase", db: "admin" }]})
+#### Autentica o usuário , 1° User, 2° senha
+> db.auth("root","123456");
+	
+#### Para criar um usuário num banco qualquer:
+> db.createUser({ user: "andre", pwd: "0516", roles: [ "readWrite", "dbAdmin" ] })
+
+#### Sair do mongo 
+> exit
+
+#### Entrar pelo bash
+> docker exec -it mongodb bash
+
+#### Autentica com usuário root ou usuario específico
+> mongo -u root -p   ||  mongo -u andre -p --authenticationDatabase pagamentos
+
+#### Cria a collections e inserir os dados
+> use pagamentos
+> db.usuarios.insertOne({"nome": "Testando o mongo"});
+> db.usuarios.find();
+> db.usuarios.find().pretty();
+	
+</details>
+
+<details>
+<summary> PostGreSQL </summary>
+
+### PostGreSQL
+
+#### Download imagem
+> docker pull postgres:alpine
+
+#### Rodando imagem em background
+> docker  run --name postdb -e POSTGRES_PASSWORD=123456 -d -p 5432:5432 postgres:13.3-alpine
+	
+#### Entrado no container
+> docker exec -it postgres bash
+#### Entrado diretamente no banco
+> docker exec -it postdb psql -U postgres --password
+> docker exec -it postdb psql -U postgres
+
+#### Bash do postgres
+> psql -U postgres
+
+#### Lista os usuários
+> \du
+
+#### Cria um banco
+> create database teste;
+
+#### Lista os bancos
+> \l
+
+#### Entra no banco
+> \c teste
+
+#### Estrutura da tabela
+> \d teste
+	
+#### arquivo de configuração do postgres 
+> less ~/.zshrc
+
+#### Outra forma de entrar no banco
+> psql -h localhost -p 5432 -U postgres
+
+#### Sair do banco
+> \q
+
+</details>
+
+</details>
+
+<details>
+<summary> Others </summary>
+
+</details>
