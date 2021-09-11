@@ -14,6 +14,31 @@
 - Status do Docker
     - systemctl status docker
 
+## Instalando Docker no Windows
+- Power Shell como administrador
+- Verifique se a Subsistema do Windows para linux está ativada
+    - Painel de Controle
+        - Programas e Recursos
+            - Ativar ou desativar recursos do windows
+- dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+- atualiza Windows
+- dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+- [Baixe o arquivo](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
+- pelo Power Shell, entre na pasta onde está o arquivo baixado
+- Start-Process .\wsl_update_x64.msi
+- wsl --set-default-version 2
+    - Caso queira você pode entrar na loja do windows e baixar a versão do linux para roda dentro do windows
+- Instalar o Docker Desktop Installer.exe
+- Versão do Docker
+    - docker --version
+- Reinicie o PC
+- caso de erro ao startar o Docker Desktop
+- [Reinstale o wsl](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
+#### Referência
+- [Instalar o Docker no Windows](https://docs.docker.com/desktop/windows/install/#system-requirements-for-wsl-2-backend)
+- [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+
+
 ## Baixando imagem
 - [docker hub](https://hub.docker.com/)
 - docker pull hello-world
@@ -58,16 +83,17 @@
 
 ## Criando container com MySql
 - docker pull mysql
-- docker run -e MYSQL_ROOT_PASSWORD=Senha123 --name mysql-A -d -p 3306:3306 mysql
+- docker run -e MYSQL_ROOT_PASSWORD=123456 --name mysql-container -d -p 3306:3306 mysql
     - **-e** declarando uma variável
     - **-d** em backgroud
     - **-p** definindo uma porta
     - **-name** nome para o container
-- docker exec -it mysql-A bash
+- docker exec -it mysql-container bin/bash
 - mysql -u root -p --protocol=tcp
 - **CREATE DATABASE aula;**
 - **show databases;**
-- docker inspect mysql-A
+- docker inspect mysql-container
+![Inspect do container](./imagens/docker/inspect_mysql_mounts.png)
 - mysql -u root -p --protocol=tcp
 
 ### Acessando container externamente
@@ -92,6 +118,8 @@
 ### Banco com Volume
 #### Mesmo excluido os containers, eles podem ser recuperados apenas apontando para o mesmo caminho onde os dados foram gravados
 - docker run -e MYSQL_ROOT_PASSWORD=Senha123 --name mysql-A -d -p 3306:3306 --volume=/data:/var/lib/mysql mysql
+- WINDOWS
+    - docker run -e MYSQL_ROOT_PASSWORD=123456 --name mysql-container -d -p 3306:3306 -v=y:/tst-docker/container-mysql:/var/lib/mysql mysql:5.7
 - mysql -u root -p --protocol=tcp --port=3306
 
 ```
@@ -107,6 +135,9 @@ INSERT INTO alunos (AlunoID, Nome, Sobrenome, Endereco, Cidade)
 VALUES 
 (1, 'Carlos Alberto', 'da Silva', 'Av. que sobe e desce que ninguém conhece', 'Manaus');
 ```
+- Remove container em execução, sem a necessidade de parar e depois remover
+    - docker rm -f id_container
+
 ### Volumes
 #### Definição
 - Basicamente, temos 3 tipos de volumes ou montagens para dados persistentes:
@@ -156,6 +187,73 @@ VALUES
     - docker exec -ti debian_container bash
     - cd /data
     - touch file3.txt
+- docker volume create centos-A
+- docker run -dti --mount type=volume,src=centos-A,dst=/data --name centos-A centos
+- docker inspect centos-A
+    - verifica Mounts
+- docker rm -f centos-A
+- exclui todos os volumes que não estão em uso
+    - docker volume prune
+
+## Exemplos
+### Usando Apache
+- docker run  --name apache-A -d -p 80:80 --volume=/data/-apache-A:/usr/local/apache2/htdocs/ httpd
+- Cria nessa pasta um arquivo index.html e coloca o código abaixo
+```
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>Exemplo Apache</title>
+</head>
+<body>
+<h1> OK !! Apache funcionando!!!!! </h1>
+</body>
+</html>
+```
+- docker run  --name php-A -d -p 8080:80 --volume=/data/php-A:/var/www/html php:7.4-apache
+- Cria nessa pasta um arquivo index.php e coloca o código abaixo
+```
+<?php
+phpinfo();
+?>
+```
+> Mostra o status do container
+    - docker stats nome-container
+
+### Limitando memória e CPU
+![Uso de memória](./imagens/docker/limit_memory.png)
+- sair, aperte CRTL+C
+- docker stats php-A
+- Especifíca a quantidade de memória e a porcentagem da CPU que deve usar
+    - docker update php-A -m 128M --cpus 0.2
+- docker run --name ubuntu-C -dti -m 128M --cpus 0.2 ubuntu
+- Entre no container, aplicação para teste de stress
+    - apt update && apt install stress
+    - stress --cpu 1 --vm-bytes 50m --vm 1 --vm-bytes 50m
+        - **--vm** pacote
+        - **--vm-bytes** volume de dados a ser enviado
+##### docker info
+- informações do servidor
+##### docker container logs nome-container
+- logs de determinado container
+##### docker container top nome-container
+- quais processos estão em execução no container
+
+## REDES
+- ip a
+    - mostra as redes virtuais
+- docker network --help
+- docker network ls
+- docker container inspect brigde
+    - mostra quais containers estão associados a essa rede
+- apt-get install iputils-ping
+- docker network create minha-rede
+- containers criados na mesma rede podem se comunicar
+- docker run -dit --name Ubuntu-A --network minha-rede  ubuntu
+- docker run -dit --name Ubuntu-B --network minha-rede  ubuntu
+
+
 
 # Subindo imagens
 <details>
