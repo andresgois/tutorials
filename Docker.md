@@ -253,6 +253,122 @@ phpinfo();
 - docker run -dit --name Ubuntu-A --network minha-rede  ubuntu
 - docker run -dit --name Ubuntu-B --network minha-rede  ubuntu
 
+## Dockerfile
+#### Exemplo 01
+- criando o script
+    - nano dockerfile
+```
+FROM ubuntu
+RUN apt update && apt install -y python3 && apt clean
+COPY app.py /opt/app.py
+CMD python3 /opt/app.py
+```
+- Executando o script
+    - docker build . -t python-ubuntu
+- docker run -ti --name my-app python-ubuntu
+#### Exemplo 02
+- arquivo da aula
+    - wget http://site1368633667.hospedagemdesites.ws/site1.zip
+- compactar os arquivos, linux só aceita o .tar
+    - compacta todos os arquivos da pasta atual
+    - tar -czf site.tar ./
+```
+FROM debian
+
+RUN apt-get update && apt-get install -y apache2 && apt-get clean
+
+ENV APACHE_LOCK="var/lock"                      // Evita mais de uma instância no mesmo container                
+ENV APACHE_PID_FILE="var/run/apache2.pid"       // Arquivo com o PID número de identificação do processo         
+ENV APACHE_RUN_USER="www-data"                  // Usuário que executa o apache
+ENV APACHE_RUN_GROUP="www-data"                 // Grupo
+ENV APACHE_LOG_DIR="/var/log/apache2"           // Logs do apache
+
+ADD site.tar /var/www/html                      // Descompacta o arquivo nessa pasta
+LABEL description="Apache Webserver 1.0"         
+VOLUME /var/www/html/
+EXPOSE 80
+ENTRYPOINT ["/usr/sbin/apachectl"]              // Local de onde o arquivo do apache será executado
+
+CMD ["-D", "FOREGROUND"]                        // Afirma que o arquivo **apachectl** será executado em primeiro plano
+```
+- docker image build -t debian-apache:1.0 .
+- docker run  -dti -p 80:80 --name meu-apache debian-apache:1.0
+
+#### Exemplo 03
+- app.py
+```
+nome = input("Qual é o seu nome? ")
+	print (nome)
+```
+- Dockerfile do python
+```
+FROM python
+
+WORKDIR /usr/src/app
+COPY app.py /usr/src/app
+CMD [ "python", "./app.py" ]
+```
+#### Exemplo 04
+- docker pull golang
+- docker pull alpine
+
+```
+package main
+import (
+    "fmt"
+)
+
+func main() {
+  fmt.Println("Qual é o seu nome:? ")
+  var name string
+  fmt.Scanln(&name)
+  fmt.Printf("Oi, %s! Eu sou a linguagem Go! ", name)
+}
+```
+- Dockerfile
+```
+FROM golang as exec
+
+COPY app.go /go/src/app/
+
+ENV GO111MODULE=auto
+
+WORKDIR /go/src/app
+
+RUN go build -o app.go .
+
+FROM alpine
+
+WORKDIR /appexec
+COPY --from=exec /go/src/app/ /appexec
+RUN chmod -R 755 /appexec
+ENTRYPOINT ./app.go
+```
+- docker image build -t app-go:1.0 .
+- docker run -ti  app-go:1.0
+####  Realizando o upload de imagens para o Docker Hub
+- docker login
+- docker build . -t nome-de-usuário/my-go=app:1.0
+- docker push nome-deu-usuário/my-go=app:1.0
+
+#### Registry: Criando um servidor de imagens
+- docker run -d -p 5000:5000 --restart=always --name registry registry:2
+- Caso esteja logado no docker hub
+    - docker logout
+- docker image tag [id_container] localhost:5000/meu-apache:1.0
+- curl localhost:5000/v2/_catalog
+    - {"repositories":[]}
+- docker push  localhost:5000/my-go-app:1.0
+- nano /etc/docker/daemon.json 
+- 	{ "insecure-registries":["10.0.0.189:5000"] }
+- systemctl restart docker
+- docker push  localhost:5000/my-go-app:1.0
+
+
+
+
+
+
 
 
 # Subindo imagens
