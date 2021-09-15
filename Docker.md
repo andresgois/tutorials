@@ -508,7 +508,13 @@ mysqli_close($link);
 ```
 - [Exemplos de Compose Oficial](https://github.com/docker/awesome-compose)
 
+## Docker Machine
+- é uma ferramenta que permite instalar o docker **Engine** em um hosts **virtuais** e gerenciar os hosts com comandos docker-machine. Você pode usar o Docker Machine para criar **hosts** Docker em seu Mac local ou windows, na rede de sua empresa, em seu data center ou provedores de nuvem como Azure, AWS ou DigitalOcean.
 
+- [Docker Machine](https://docs.docker.com/machine/)
+- [Install Docker Machine](https://docs.docker.com/machine/install-machine/)
+- Comandos
+    - docker-machine --version
 
 
 
