@@ -510,12 +510,52 @@ mysqli_close($link);
 
 ## Docker Machine
 - é uma ferramenta que permite instalar o docker **Engine** em um hosts **virtuais** e gerenciar os hosts com comandos docker-machine. Você pode usar o Docker Machine para criar **hosts** Docker em seu Mac local ou windows, na rede de sua empresa, em seu data center ou provedores de nuvem como Azure, AWS ou DigitalOcean.
+- **Docker Engine**: Docker como gerenciador de imagem e de containers na nuvem ou em host virtuais
 
 - [Docker Machine](https://docs.docker.com/machine/)
 - [Install Docker Machine](https://docs.docker.com/machine/install-machine/)
+- Caso de Uso
+    - instalar o docker-machine na sua máquina, sem o docker
+    - tem que ter o virtual box instalado
+    - hyper-v : no Windows
 - Comandos
     - docker-machine --version
-
+    - docker-machine ls
+    - docker-machine create --help
+    - docker-machine create --driver virtualbox --virtualbox-disk-size "50000" --virtualbox-memory "2048" my-docker-vm
+        - isso cria uma máquina virtual com S.O e com docker instalado
+    - docker-machine ls
+    - docker-machine ip my-docker-vm
+    - docker-machine ssh my-docker-vm
+        - acessa a máquina via SSH
+    - docker-machine stop my-docker-vm
+    - docker-machine start my-docker-vm
+    - docker-machine env my-docker-vm
+    - outra forma de acesso remoto
+        - Acessar a máquina FEDORA
+            - eval $(dcoker-machine env my-docker-vm)
+        - Sair da máquina
+            - eval $(dcoker-machine env -u)
+- Teste na AWS
+    - Console AWS
+    - IAM **Criar usuário**
+    - Usuários
+    - Adicionar usuário
+        - Nome para usuário
+            - [] Acesso ao painel
+            - [] Console
+            - Senha
+        - Definir permissões
+            - [] Adicionar usuário ao grupo
+            - [] Copiar permissões de um usuário existente
+            - [x] Anexar politica existente
+                - AdministratorAccess
+            - Tag para facilita a busca do usuário
+            - revisão
+            - Dados importantes
+                - ID da chave de acesso
+                - Chave de acesso secreta
+        -  
 
 
 
