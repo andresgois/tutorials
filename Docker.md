@@ -555,7 +555,88 @@ mysqli_close($link);
             - Dados importantes
                 - ID da chave de acesso
                 - Chave de acesso secreta
-        -  
+        - [Passo 2](https://docs.docker.com/machine/examples/aws/)
+        - cria pasta **.aws** no diretório do usuário
+        - entra na pasta
+        - cria arquivo **credentials**, com
+```
+[default]
+aws_access_key_id = AKID1234567890
+aws_secret_access_key = MY-SECRET-KEY
+```
+        - substitua seus dados por seu ID e Chave
+- docker-machine create --driver amazonec2 --help
+- docker-machine create --driver amazonec2 --amazonec2-region "sa-east-1" my-aws-vm
+    - Isso cria uma máquina virtual na AWS na região de São Paulo
+- docker-machine ssh my-aws-vm
+- sudo docker run --name my-apache -d -p 80:80 httpd
+- Excluíndo máquina virtual
+    - docker-machine rm -f my-docker-vm
+
+## Docker Swarm
+##### O que é um Cluster
+    - Um **Cluster** (do inglês cluster:'grupo, aglomerado') consiste em computadores ligados que trabalham em conjunto, de modo que em muitos aspectos, podem ser considerados como um único sistema. Computadores em cluster executam a mesma tarefa, controlado e programado por software.
+    - cada computador presente em cluster pe conhecido como nó (node).
+##### O que é Docker Swarm
+    - É um recurso do Docker que fornce funcionalidades de orquestração de contêiner, incluindo clustering nativo de hosts do Docker e agendamento de cargas de trabalho de contêiners. Um grupo de hosts do Docker formam um cluster "Swarm".
+##### Nós gerenciadores e nós de trabalho
+- Um swarm é composto por dois tipos de hosts de contêiner: nós **gerenciadores** e nós de **trabalho**. Todos os comandos CLI do Docker para controlar e monitorar um swarm devem ser executados em um de seus nós gerenciadores. Os nós gerenciadores podem ser considerados os "zeladores" do estado Swarm — juntos, eles formam um grupo de consenso que mantém o reconhecimento do estado dos serviços em execução no swarm, e o trabalho deles é garantir que o estado real do swarm seja sempre condizente com o estado desejado, conforme definido pelo desenvolvedor ou administrador. 
+- Para ingressar em um swarm, um nó de trabalho deve usar um "token de associação" gerado pelo nó gerenciador quando o swarm foi inicializado.
+- Gerenciando máquina individual
+- ![Docker CLI](./imagens/docker_cli.png)
+- Gerenciando máquinas com Swarm
+- ![Docker Swarm](./imagens/docker_swarm.png)
+
+### Criando uma máquina para teste
+- docker-machine create --driver virtualbox dw1
+- docker-machine create --driver virtualbox dw2-
+- docker-machine create --driver virtualbox dw3
+- docker-machine ls
+    - Verificar a faixa de IP
+- docker-machine ssh dw1
+- ip a
+- docker sawrm init --advertise-addr ip-da-máquina-server
+    - copie o comando e tokem que ele gerou
+- exit
+- docker-machine ssh dw2
+- cola o comando que foi gerado na máquina gerente
+- pronta, agora ele está configurado como work
+    - não gerenciar o cluster, apenas recebe containers
+- exit
+- docker-machine ssh dw3
+- cola o comando que foi gerado na máquina gerente
+- exit
+- docker-machine ssh dw1
+- mostra todos os nós adicionados
+    - docker node ls
+- Replica uma imagem através de um cluster swarm
+    - docker service create --name web-server --replicas 10 -p 8080:80 httpd
+- docker service ps web-server
+- docker node update --availability drain dw1
+    - máquina gerente não receberá contêiners
+    - tem que está na máquina gerente
+    - se existir contêiner, ele será redirecionado para outra máquina
+- Exclui um service
+    - docker service rm web-server
+- docker node update --help
+    - docker node update --availability pause dw1
+    - docker node update --availability active dw1
+- docker service create --name ubuntu-server -dt --replicas 2 ubuntu
+- caso não lembre mais a chave para associar um gerente ao work
+    - Entre no Manager "Máquina principal"
+    - docker swarn join-token worker
+        - ele mostra novamente o token
+- Entre na nova máquina e coloe o comando, pronto ela está adicionar a máquina principal
+- docker-machine stop dw1
+- docker-machine start dw1
+- adicionar um worker para Manange
+    - docker node ls
+    - docker node promote dw2
+    - docker node ls
+- **É necessário pelo menos 51% dos managers ativos para que não caia os contêinrs**
+
+
+
 
 
 
