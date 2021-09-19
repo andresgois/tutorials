@@ -6,6 +6,7 @@
 * Comandos
 * Especificações
 * Detalhes de usabilidade
+[GIT](./Git.md)
 
 ## Database
 [Documentação Database](./Database.md)

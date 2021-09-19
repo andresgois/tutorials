@@ -635,6 +635,113 @@ aws_secret_access_key = MY-SECRET-KEY
     - docker node ls
 - **É necessário pelo menos 51% dos managers ativos para que não caia os contêinrs**
 
+### Volumes em um cluster Swarm
+- Precisa de uma tecnologia para distribuir arquivos entre hosts
+- NFS
+- Precisa de Sistemas Operacionais mais robustos
+- Linux Server
+- Se for usar em máquinas virtuais
+    - Clona primeira máquina e gerar endereços MAC diferentes
+    - Rede modo bridge
+- Na nuvem
+    - VPC
+    - Verificar Região
+        - Tag
+        - IP padrão classe C
+        - Create vpc
+        - copiar o ID
+        - Criar subrede
+            - Escolha o ID gerado anteriormente
+            - Nome
+            - Específicar grupo
+            - Faixa de Ip total
+                - Tipo: 172.31.0.0/24 
+            - create subrede
+        - Internet Gateway
+            - Nome TAG
+            - create
+            - Attach to a VPC
+            - busca a rede local
+        - Roteamento para esse gateway
+            - Route Tables
+                - seleciona o roteamento da rede local
+                - edite routers
+                - Add route
+                    - 0.0.0.0/0 - ID do gateway
+                    - Save
+    - Na máquina Host
+    - docker-machine create --driver amazonec2 --amazonec2-region "us-east-1" --amazonec2-zone a --amazonec2-vpc-id "id-do-vpc" --amazonec2-subnet-id "subnet-003616161616" aws-l
+    - isso é a configuração para a máquina 1
+    - Entrando na máquina
+        - docker-machine ssh aws-1
+    - definir um root para a máquina
+        - sudo passwd root
+    - ip a
+        - eth0: Máquina host
+        - docker0: ip docker
+    - docker swarn init
+        - Copiar o TOKEN
+    - Sai da aws-1 e vá para aws-2
+    - **Se for adicionar essa máquina ao cluster ele não deixa por causa do Firewall da AWS, por isso é necessário ir na aws e configurar as regras de segurança para dar acesso a porta do swarm, que é a *3377***
+    - Quando cria uma máquina ele adiciona a um grupo de segurança específico
+    - Na instâncias
+    - Aba segurança
+        - Grupos de segurança
+        - Editar regra de entrada
+        - Adicionar regra
+            - 2377
+            - todos os ips
+        - salvar
+    - Adicionando a máquina
+    - colar comando criado na máquina aws-1
+        - Exemplo:
+            - docker swarm join --token SWMTKN-1-5gsnd5vrsix8xpp 172.31.0.186:2377
+    - HOST
+    - docker node ls
+    - promover aws-2
+    - docker node promote aws-2
+    - Criando Volume
+        - docker volume create app
+    - Pasta padrão onde são criados os volumes dentro do docker
+        - cd /var/lib/docker/volumes/app
+        - cd _data/
+        - wget htttp://site113134.hospedagemdesites.ws/site.zip
+        - unzip site1.zip
+        - se não tiver instalado
+            - sudo apt-get install unzip
+    - Criando um serviço com a imagem do apache
+    - docker service create --name web-server --replicas 3 -dt -p 8080:80 --mount type=volume,src=app,dst=/usr/local/apache2/htdocs/ httpd
+    - docker service ls
+    - Adicionar mais regras na política de seguraça
+    - liberar porta HTTP 80  Para todos
+    - liberar porta TCP personalizado 8080 Para todos
+    - Pegando o IP público com a porta 8080, da para acessar o site
+    - **Mas o volume não foi replicado para todas as máquinas**
+    - Para replicar
+        - Máquina AWS-1
+        - apt-get install nsf-server
+        - systemctl status nfs-server
+        - systemctl enable nfs-server
+        1. Copiar o caminho do volume
+        2. nano /etc/exports
+        3. Escreva o seguinte nesse arquivo
+            - /var/lib/docker/volumes/app/_data *(rw,sync,subtree_check)
+            - Salve
+        4. exportfs -ar
+        5. pega o ip da aws-1
+        6. vai na máquina AWS-2
+        7. showmount -e 172.31.0.186
+            - Se der erro
+            - apt-get install nft-common
+            - vai na AWS
+            - adicionar nova regra de entrada
+            - NFS Acesso a todos
+            - Todos os UDP Acesso a todos
+        8. mount 172.31.0.186:/var/lib/docker/volumes/app/_data /var/lib/docker/volumes/app/_data
+
+
+
+
 
 
 
