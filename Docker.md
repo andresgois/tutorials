@@ -738,7 +738,158 @@ aws_secret_access_key = MY-SECRET-KEY
             - NFS Acesso a todos
             - Todos os UDP Acesso a todos
         8. mount 172.31.0.186:/var/lib/docker/volumes/app/_data /var/lib/docker/volumes/app/_data
+        9. docker service ls
+        10. docker service rm we-server
+        11. docker volume prune
+##### Criando um conteiner de Banco de dados e fazer todas as aplicações se conectarem a ele
+- na aws-1
+- docker volume create data
+- docker run -e MYSQL_ROOT_PASSWORD=12345 -e MYSQL_DATABASE=meubanco --name mysql-A -d -p 3306:3306 -mount type=volume,src=data,dst=/var/lib/mysql/ mysql:5.7
+- Liberar a porta 3306 no console da aws, nas regras de entrada
+- pega ip público da máquina
+- Acessa o banco
+```
+CREATE TABLE dados (
+    AlunoID int,
+    Nome varchar(50),
+    Sobrenome varchar(50),
+    Endereco varchar(150),
+    Cidade varchar(50)
+);
+```
+- cria um docker-composer.yml
+```
+version: "3.7"
 
+services:
+  web:
+
+    image: webdevops/php-apache:alpine-php7
+    ports:
+      - "80:80"
+    volumes:
+      - app:/app
+
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: "Senha123"
+      PMA_HOST: "54.234.153.24"
+
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+    ports:
+      - "8080:80"
+    volumes:
+      - php-ini:/usr/local/etc/php/conf.d/php-phpmyadmin.ini
+
+volumes:
+  app:
+  php-ini:
+```
+
+- docker stack deploy -c docker-compose.yml php-app
+- docker service ps php-app_phpmyadmin
+- docker service ps php-app_web
+
+- Aplicação
+- cd /var/lib/docker/volumes
+
+- nano /etc/exports 
+- Replica novo volume para as outras máquinas
+```
+	 /var/lib/docker/volumes/php-app_app/_data *(rw,sync,subtree_check)
+```
+- exportfs -ar
+
+- cola isso em cada máquina virtual e pega o ip da máquina
+- **mount 172.31.0.37:/var/lib/docker/volumes/php-app_app/_data /var/lib/docker/volumes/php-app_app/_data**
+- dentro do _data
+- index.php
+```
+<html>
+<head>
+<title>Exemplo PHP</title>
+</head>
+
+<?php
+ini_set("display_errors", 1);
+header('Content-Type: text/html; charset=iso-8859-1');
+
+echo 'Versao Atual do PHP: ' . phpversion() . '<br>';
+
+$servername = "54.234.153.24";
+$username = "root";
+$password = "Senha123";
+$database = "meubanco";
+
+// Criar conexão
+$link = new mysqli($servername, $username, $password, $database);
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+$valor_rand1 =  rand(1, 999);
+$valor_rand2 = strtoupper(substr(bin2hex(random_bytes(4)), 1));
+
+
+$query = "INSERT INTO dados (AlunoID, Nome, Sobrenome, Endereco, Cidade) VALUES ('$valor_rand1' , '$valor_rand2', '$valor_rand2', '$valor_rand2', '$valor_rand2')";
+
+
+if ($link->query($query) === TRUE) {
+  echo "New record created successfully";
+} else {
+  echo "Error: " . $link->error;
+}
+
+```
+-  uploads.ini
+``` 
+file_uploads = On
+memory_limit = 500M
+upload_max_filesize = 500M
+post_max_size = 500M
+max_execution_time = 600
+max_file_uploads = 50000
+max_execution_time = 5000
+max_input_time = 5000
+```
+#### Teste de carga
+- Fazer cadastro
+- [Site para teste de Carga](https://loader.io/)
+- Ir em Target
+- Domain
+    - http://ip_da_maquina
+- Next verify
+- vai gerar um nome para você salvar como arquivo dentro da pasta _data com o mesmo nome
+- nome.txt
+- mesmo conteúdo do nome
+- Verify no site
+- Next teste
+    - nome para o teste
+    - quantidade de clientes acessando a máquina
+    - arquivo, no caso index.php
+- Run test
+
+- No Docker
+- verificar os logs
+- docker logs id_conteiner
+
+#### Criando um AWS Load Balancer
 
 
 
