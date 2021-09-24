@@ -890,6 +890,266 @@ max_input_time = 5000
 - docker logs id_conteiner
 
 #### Criando um AWS Load Balancer
+- Console AWS
+- Load Balances
+- Criar load balance
+    - Modo classico
+    - nome: Cluster-swarm
+    - rede: rede onde foram criadas as máquinas
+    - seleciona a subrede interna
+    - next
+    - aplica a um grupo de segurança
+    - next
+    - Nessa parte você define como será testado
+        - protocolo
+        - porta
+        - arquivo principal
+        - isso é pra quando um dos nós cair ele saiba onde vai pingar depois
+    - next
+    - mostra os nós que você tem
+    - marque as que precisar
+    - tag
+        - Balance
+    - resumo
+    - criar
+    - Copiar **Nome do DNS**
+- Faça o teste de carga novamente, mas agora no lugar do IP use o nome do DNS criado no load balance
+
+#### Criando um Proxy NGINX
+- Remove load balance
+- console AWS
+- Load balance
+- Selecione o load
+    - ações
+        - Excluir
+- Load balance por proxy
+    - Pegar o ip interno das máquinas
+- mkdir /proxy
+- cd /proxy
+- Arquivo de configuração do proxy
+    - nano nginx.conf
+- Exemplo
+    - IP de cada máquina
+    - Porta
+    - Porta para acesso ao proxy: 4500
+    - Liberado para qualquer direção
+```
+http {
+   
+    upstream all {
+        server 172.31.0.37:80;
+        server 172.31.0.151:80;
+        server 172.31.0.149:80;
+    }
+
+    server {
+         listen 4500;
+         location / {
+              proxy_pass http://all/;
+         }
+    }
+
+}
+
+
+events { }
+```
+
+- nano dockerfile
+```
+	FROM nginx
+	COPY nginx.conf /etc/nginx/nginx.conf
+```
+
+- docker build -t proxy-app .
+- docker container run --name my-proxy-app -dti -p 4500:4500 proxy-app
+- Libera porta 4500 no servidor que instalou, no caso aws-1, na AWS
+- Pegar ip publico + porta 4500 colocar no navegador
+
+#### Stacks e Services
+- Defini qual aplicação sobe em qual cluster
+- docker stack ls
+    - Mostra o nome da aplicação e quantos serviços tem pra eles
+- docker stack ps php-app
+    - mostra onde está cada aplicação
+-  docker service ls
+    - mostra onde os serviços estão
+- Excluir a stack
+    - docker stack rm php-app
+- docker volume prune
+
+#### Node Label / Stack Deploy
+- docker node ls
+- **Definindo um rótulo para a máquina aws-1**
+- docker node update --label-add dc=proxy-data aws-1
+- nano docker-compose.yml
+##### docker-composer.yml
+
+```
+version: "3.7"
+
+services:
+
+  proxy:
+
+    image: proxy-app
+    
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+        - node.labels.dc == proxy-data
+    ports:
+      - "4500:4500"
+    
+  data:
+
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: "Senha123"
+      MYSQL_DATABASE: "meubanco"
+
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+        - node.labels.dc == proxy-data
+    ports:
+      - "3606:3606"
+    volumes:
+      - data:/var/lib/mysql/
+
+
+
+  web:
+
+    image: webdevops/php-apache:alpine-php7
+    ports:
+      - "80:80"
+    volumes:
+      - app:/app
+
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+
+  phpmyadmin:
+
+    image: phpmyadmin/phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: "Senha123"
+      PMA_HOST: "34.228.25.68"
+
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 50M
+      placement:
+        constraints:
+         - node.labels.dc == proxy-data
+    ports:
+      - "8080:80"
+    
+
+volumes:
+
+  app:
+  data:
+```
+
+- docker stack deploy -c docker-compose.yml php-app
+- nano /etc/exports 
+
+```
+	/var/lib/docker/volumes/php-app_app/_data *(rw,sync,subtree_check)
+```
+- exportfs -ar
+
+```
+mount 172.31.0.227:/var/lib/docker/volumes/php-app_app/_data /var/lib/docker/volumes/php-app_app/_data
+```
+##### index.php
+
+```
+<html>
+
+<head>
+<title>Exemplo PHP</title>
+</head>
+
+
+<?php
+ini_set("display_errors", 1);
+header('Content-Type: text/html; charset=iso-8859-1');
+
+
+
+echo 'Versao Atual do PHP: ' . phpversion() . '<br>';
+
+$servername = "34.228.25.68";
+$username = "root";
+$password = "Senha123";
+$database = "meubanco";
+
+// Criar conexão
+
+
+$link = new mysqli($servername, $username, $password, $database);
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+$valor_rand1 =  rand(1, 999);
+$valor_rand2 = strtoupper(substr(bin2hex(random_bytes(4)), 1));
+
+
+$query = "INSERT INTO dados (AlunoID, Nome, Sobrenome, Endereco, Cidade) VALUES ('$valor_rand1' , '$valor_rand2', '$valor_rand2', '$valor_rand2', '$valor_rand2')";
+
+
+if ($link->query($query) === TRUE) {
+  echo "New record created successfully";
+} else {
+  echo "Error: " . $link->error;
+}
+
+?>
+
+</html>
+```
+##### SQL
+```
+CREATE TABLE dados (
+    AlunoID int,
+    Nome varchar(50),
+    Sobrenome varchar(50),
+    Endereco varchar(150),
+    Cidade varchar(50)
+);
+
+```
+- /var/lib/docker/volumes
+
+- nano /etc/exports 
+```
+	 /var/lib/docker/volumes/php-app_app/_data *(rw,sync,subtree_check)
+```
+- exportfs -ar
+- mount 172.31.0.37:/var/lib/docker/volumes/php-app_app/- - _data /var/lib/docker/volumes/php-app_app/_data
+
+
+
+
+
+
+
 
 
 
