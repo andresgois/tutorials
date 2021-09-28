@@ -59,6 +59,9 @@
     - git log --graph --oneline
 - Ramo que o projeto esta
     - git branch
+- Verifica se já esté em um repositório remoto
+    - gti remote
+
 #### Rastrear as mudanças nas versões do projeto e recuperar uma versão
 - git checkout hash_do_commit
 - git branch
@@ -88,5 +91,25 @@
 #### Criando ramificações do projeto
 - Criando nova ramificação
     - git checkout -b novo_ramo
-    
-Aula 05
+- Crie alguns arquivos no novo_ramo
+- add e commit
+- volte para a branch master
+- Mostra o gráfico de todas as branchs
+    - git log --oneline --graph --all
+- faça alterações no ramo master, de preferencia faça nos mesmo arquivos da novo_ramo
+- add e commit
+
+- **git merge novo_ramo**
+- Quando a conflitos no GIT
+- VS Code alerta
+    - Accept current change
+        - Mantém a linha do ramo master
+    - Accept incoming change
+        - Mantém arquivo do novo_ramo
+    - Accept both changes
+        - Mantém arquivo de ambos
+    - Compare changes
+        - Comparação refinada
+
+Aula 09
+https://www.youtube.com/watch?v=Xsulc8agj_A&list=PLbEOwbQR9lqzK14I7OOeREEIE4k6rjgIj&index=9&ab_channel=ProfessorJos%C3%A9deAssis

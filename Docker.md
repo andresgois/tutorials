@@ -1,10 +1,10 @@
 
 # Docker
 
-## O que é Docker
+### O que é Docker
 - É uma containerização para criação de containers Linux
 
-## Instalar docker no Linux
+### Instalar docker no Linux
 - [Referência](https://docs.docker.com/engine/install/ubuntu/)
 - Vê versão do linux
     - cat /etc/\*realease\*
@@ -14,7 +14,7 @@
 - Status do Docker
     - systemctl status docker
 
-## Instalando Docker no Windows
+### Instalando Docker no Windows
 - Power Shell como administrador
 - Verifique se a Subsistema do Windows para linux está ativada
     - Painel de Controle
@@ -39,7 +39,7 @@
 - [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 
 
-## Baixando imagem
+### Baixando imagem
 - [docker hub](https://hub.docker.com/)
 - docker pull hello-world
 - Vê todas as imagens
@@ -56,7 +56,7 @@
 - executa o container e já entra dentro dele
     - docker run -it ubuntu 
 
-## Executando aplicações no container
+### Executando aplicações no container
 - docker --help
 - docker run -dti ubuntu
 - docker exec -it id_container /bin/bash
@@ -81,7 +81,7 @@
 ### Tags
 - docker pull debian:9
 
-## Criando container com MySql
+### Criando container com MySql
 - docker pull mysql
 - docker run -e MYSQL_ROOT_PASSWORD=123456 --name mysql-container -d -p 3306:3306 mysql
     - **-e** declarando uma variável
@@ -115,7 +115,7 @@
 - docker container stop mysql-A
 - docker container start mysql-A
 
-### Banco com Volume
+## Banco com Volume
 #### Mesmo excluido os containers, eles podem ser recuperados apenas apontando para o mesmo caminho onde os dados foram gravados
 - docker run -e MYSQL_ROOT_PASSWORD=Senha123 --name mysql-A -d -p 3306:3306 --volume=/data:/var/lib/mysql mysql
 - WINDOWS
@@ -195,8 +195,8 @@ VALUES
 - exclui todos os volumes que não estão em uso
     - docker volume prune
 
-## Exemplos
-### Usando Apache
+### Exemplo - Dockerfile
+#### Usando Apache
 - docker run  --name apache-A -d -p 80:80 --volume=/data/-apache-A:/usr/local/apache2/htdocs/ httpd
 - Cria nessa pasta um arquivo index.html e coloca o código abaixo
 ```
@@ -221,7 +221,8 @@ phpinfo();
 > Mostra o status do container
     - docker stats nome-container
 
-### Limitando memória e CPU
+
+## Limitando memória e CPU
 ![Uso de memória](./imagens/docker/limit_memory.png)
 - sair, aperte CRTL+C
 - docker stats php-A
@@ -253,8 +254,9 @@ phpinfo();
 - docker run -dit --name Ubuntu-A --network minha-rede  ubuntu
 - docker run -dit --name Ubuntu-B --network minha-rede  ubuntu
 
-## Dockerfile
-#### Exemplo 01
+## Dockerfile com python
+
+### Python 
 - criando o script
     - nano dockerfile
 ```
@@ -266,7 +268,10 @@ CMD python3 /opt/app.py
 - Executando o script
     - docker build . -t python-ubuntu
 - docker run -ti --name my-app python-ubuntu
-#### Exemplo 02
+
+
+
+#### Exemplo 02 - Site Básico
 - arquivo da aula
     - wget http://site1368633667.hospedagemdesites.ws/site1.zip
 - compactar os arquivos, linux só aceita o .tar
@@ -293,6 +298,8 @@ CMD ["-D", "FOREGROUND"]                        // Afirma que o arquivo **apache
 ```
 - docker image build -t debian-apache:1.0 .
 - docker run  -dti -p 80:80 --name meu-apache debian-apache:1.0
+
+</details>
 
 #### Exemplo 03
 - app.py
