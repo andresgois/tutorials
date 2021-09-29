@@ -29,9 +29,38 @@
 - Rodando um container
     - docker run ubuntu
     - docker run -it ubuntu
-    - 23
+- Vê containers executando
+    - docker ps
+    - docker container ls
+- Vê containers que já foram executando
+    - docker ps -a
+    - docker container ls -a
+- Roda container com iteração
+    - docker run -it node
+- Roda container em backgroung
+    - docker run nginx
+    - docker run -d nginx
+        - d: detached
+- Expor uma porta
+    - docker run -d -p 80:80 nginx
+- Nome para o container
+    - docker run -d -p 80:80 --name site-nginx nginx
+- Para o container
+    - docker stop <id_container> || <nome_container>
+- Iniciar o container
+    - docker start <id_container> || <nome_container>
+
+#### Verificando logs
+    - docker logs <id_container> || <id_container>
+    - docker logs <id_container> || <id_container> -f
+- Removendo containes
+    - docker container rm <id_container> || <id_container> 
+    - docker container rm <id_container> || <id_container> -f
+        - f: força a exclusão, mesmo se estiver em execução
 
 ## Seção 3: Criando imagens e avançando em containers
+- docker run -d -p 80:80 --name my-apache httpd
+- 
 
 ## Seção 4: Introduzindo volumes aos nossos containers
 
