@@ -71,7 +71,9 @@
 - Arquivo não adicionado ao container
 - revisão antes do commit
 - git diff
+
 ![Git diff](./imagens/git/git_diff.png)
+
     - Em vermelhor arquivos retidos
     - Em verde arquivos adicionados
 - git status
@@ -83,6 +85,7 @@
     - git restore --staged . | pode colocar o nome do arquivo no lugar do ponto
     - para remover arquivos do add
         - git restore . | nome do arquivo
+
 ![Git restore](./imagens/git/git_restore.png)
 
 #### Excluir um commit
