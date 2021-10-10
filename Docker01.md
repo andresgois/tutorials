@@ -60,7 +60,34 @@
 
 ## Seção 3: Criando imagens e avançando em containers
 - docker run -d -p 80:80 --name my-apache httpd
-- 
+- Precisammos criar um arquivo chamado **Dockerfile**
+- **FROM** imagem base
+- **WORKDIR** diretório da aplicação
+- **EXPOSE** porta da aplicação
+- **COPY** quais arquivos precisam ser copiados
+- Dockerfile
+
+```
+FROM node
+
+WORKDIR /app
+
+COPY package*.json
+
+RUN npm install
+
+COPY. .
+
+EXPOSE 3000
+
+CMD ["node", "app.js"]
+```
+
+- Build da imagem
+    - docker build .
+- Roda o container
+    - docker run -d -p 3000:3000 id_container
+
 
 ## Seção 4: Introduzindo volumes aos nossos containers
 
