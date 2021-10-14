@@ -87,6 +87,36 @@ CMD ["node", "app.js"]
     - docker build .
 - Roda o container
     - docker run -d -p 3000:3000 id_container
+- docker pull python
+- **Comandos de ajuda**
+    - docker run --help
+- **Modo detached**
+    - docker run -d -p 3000:3000 --name node1 node
+    - docker run -d -p 3001:3000 --name node2 node
+- **Nomeando imagem com TAG**
+    - docker tag <nome>:<tag>
+    - docker tag <id_imagem> node:app
+- **Nomeando imagem no build**
+    - docker build -t meuapp .
+- **Iterativo**
+    - docker start -it <container>
+    - docker start -it nodeapp
+- **Removendo imagem**
+    - docker rmi <id_container>
+    - docker rmi -f <id_container>
+    - docker image rm <id_container>
+- **Removendo imagens, containers, network**
+    - docker system prune --help
+    - docker system prune
+- **Remove os container após a sua paralização**
+    - docker run --rm <container>
+    - docker run -d -p 3000:3000 --name node2 --rm node
+- **Copiando arquivos entre containers**
+    - docker cp container:/caminho/container/app.js ./pastaHost/
+- **Verificando informações do processamento do container**
+    - docker top some-nginx
+- **Verificar dados de um container**
+    - docker inspect some-nginx
 
 
 ## Seção 4: Introduzindo volumes aos nossos containers
