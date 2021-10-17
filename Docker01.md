@@ -139,15 +139,6 @@ CMD ["node", "app.js"]
 - Forma prática para persistir dados.
 - Todo dado criado em um container é salvo nele.
 - Backups de forma mais simples.
-- **Tipos de Volumes**
-#### Anônimos (anonymous)
-- Diretórios criados pela flag -v, porém com um nome aleatório.
-
-#### Nomeados (named)
-- São volumes com nomes
-
-#### Bind mounts
-- Salvo na nossa máquina, sem gerenciamento do docker, informamos umdiretório pra esse fim.
 
 ```
 FROM php:8-apache
@@ -156,6 +147,28 @@ COPY . .
 EXPOSE 80
 RUN chown -R www-data:www-data /var/www
 ```
+
+- *Projeto em \ExemplosDocker\2_volumes*
+- docker build -t phpmessages .
+- docker run -d -p 80:80 --name phpmessages_container phpmessages
+- **Para entrar no container
+    - docker exec -it phpmessages_container /bin/bash
+    - *as vezes pelo gitbash da erro de permissão*
+    
+
+- **Tipos de Volumes**
+#### Anônimos (anonymous)
+- Diretórios criados pela flag -v, porém com um nome aleatório.
+- docker volume create data
+- docker run -d -p 80:80 --name phpmessages_container --rm -v /data phpmessages
+
+#### Nomeados (named)
+- São volumes com nomes
+
+#### Bind mounts
+- Salvo na nossa máquina, sem gerenciamento do docker, informamos umdiretório pra esse fim.
+
+
 
 
 
