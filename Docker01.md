@@ -115,11 +115,43 @@ CMD ["node", "app.js"]
     - docker cp container:/caminho/container/app.js ./pastaHost/
 - **Verificando informações do processamento do container**
     - docker top some-nginx
+    - **Informações de todos os containers que estão rodando**
+    - docker stats
 - **Verificar dados de um container**
     - docker inspect some-nginx
-
+- **Enviar Imagem para o docker hub**
+    - docker login
+        - pede usuário e senha do docker hub
+    - docker logout
+        - encerra sessão no docker hub
+    - criar repositório no docker hub
+    - docker build -t nome/imagem .
+    - *O nome do repositório tem que ser o mesmo da imagem*
+    - docker push <nome/imagem>
+    - **Para baixa essa mesma imagem**
+        - docker pull nome/imagem
+    - **Atualiza a imagem no docker hub**
+        - *Fazer o build da imagem novamente*
+        - docker build -t nome/imagem:1 .
+        - docker push nome/imagem:1
 
 ## Seção 4: Introduzindo volumes aos nossos containers
+- Forma prática para persistir dados.
+- Todo dado criado em um container é salvo nele.
+- Backups de forma mais simples.
+- **Tipos de Volumes**
+#### Anônimos (anonymous)
+- Diretórios criados pela flag -v, porém com um nome aleatório.
+
+#### Nomeados (named)
+- São volumes com nomes
+
+#### Bind mounts
+- Salvo na nossa máquina, sem gerenciamento do docker, informamos umdiretório pra esse fim.
+
+
+
+
 
 ## Seção 5: Conectando containers com Networks
 
