@@ -119,7 +119,7 @@ sequenceDiagram
 - Ramo que o projeto esta
     - git branch
 - Verifica se já esté em um repositório remoto
-    - gti remote
+    - git remote
 - Mostra a descrição de arquivo específico
     - git show hash_do_commit
 - **Vê mudanças antes de enviar**
@@ -166,8 +166,50 @@ sequenceDiagram
 
 #### Excluir um commit
 - git reset --hard 3ee9278
+## Criando chave SSH
+[Gerar uma nova chave SSH](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
-#### Criando ramificações do projeto
+[Adicionar uma nova chave SSH à sua conta do GitHub](https://docs.github.com/pt/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+
+### Adicionar chaves no github
+- Página inicial do github
+- Settings
+- No menu clique em: **SSH and GPG Keys**
+- Clique em: **New SSH key**
+- coloque um título e a chave
+
+## Clonando repositório
+- Útil quando:
+- Quando quiser trabalhar em repositorioas open source
+- Clona seu repositório em outra máquina
+- git clone https://github.com/andresgois/vite-react-mui.git novo_nome_para_repositorio
+
+## Fork
+- Faz uma cópia de uma projeto terceiro e coloca no seu github
+- pode abrir pull request enviando para o administrador do repositório original
+
+## Criando ramificações do projeto
+- Branch
+    - É um ponteiro móvel que leva a um commit.
+    - A branch aponta para commits
+```mermaid
+    flowchart LR
+    subgraph BRANCH
+    master-->C2
+    C2-->C1
+    C1-->C0
+    teste-->C3
+    C3-->C2
+    end
+```
+
+### Vantagens
+- Poder modificar sem alterar o local principal(master)
+- Facilmente "desligável"
+- Evita comflitos
+- Múltiplas pessoas trabalhando
+
+### Criar branch
 - Criando nova ramificação
     - git checkout -b novo_ramo
 - Crie alguns arquivos no novo_ramo
@@ -175,9 +217,71 @@ sequenceDiagram
 - volte para a branch master
 - Mostra o gráfico de todas as branchs
     - git log --oneline --graph --all
-- faça alterações no ramo master, de preferencia faça nos mesmo arquivos da novo_ramo
-- add e commit
 
+### Movendo entre branches e deletando
+- **Mostra a branch atual**
+> git branch
+- **Mudar de branch**
+> git checkout nome_branch
+- **Deletar branch**
+> git branch -D nome_branch
+- ****
+>
+
+### Entendendo o Merge
+- Ele cria C6 para juntar todas as alterações de C3 e C5 com C4.
+- Forma diamante
+
+```mermaid
+    flowchart LR
+    subgraph Fazendo o Merge    
+    master-->C6
+    C6-->C5
+    C6-->C4
+    C4-->C2
+    C5-->C3
+    C3-->C2
+    C2-->C1
+    C1-->C0
+    ISS53-->C5
+    end
+```
+| PRO | CONTRA|
+|:--------------------: |:----------------:|
+|Operação não destrutiva|   Commit extra   |
+|                       | Histórico poluído|
+
+### Rebase
+- Move o commit C3 e move para a frente, no caso o C4
+- Move sempre para o inicio da fila
+- ao final tanto a branch master como a experiment vão apontar para o mesmo commit, no caso C3'.
+
+```mermaid
+    flowchart LR
+    subgraph Fazendo o Merge    
+    master-->C4
+    C4-->C2
+    C2-->C1
+    C1-->C0
+    experiment-->C3'
+    C3'-->C4
+    C3-->C2
+    end
+    style C3 fill:#bbf,stroke:#000,stroke-width:2px,color:#000
+```
+|                   PRO | CONTRA             |
+|:--------------------: |:------------------:|
+|Evita commits extras|Perde ordem cronológico|
+| Histórico linear   |                       |
+
+- **Evita perca de histórico**
+> git pull --rebase
+
+#### Merge vs Rebase
+|                   Merge                 |                 Rebase              |
+|:--------------------------------------: |:-----------------------------------:|
+|Cria novo commit pra juntar as diferenças| Joga mudanças para o inicio da fila |
+#### VS Code
 - **git merge novo_ramo**
 - Quando a conflitos no GIT
 - VS Code alerta
@@ -190,7 +294,42 @@ sequenceDiagram
     - Compare changes
         - Comparação refinada
 
-Aula 09
+
+
+## IMPORTANTÍSSIMO
+- **Mostra a diferenças entre arquivo antigo e alterado antes de *Adicionar*.**
+> git diff
+- **Remover arquivo da stage area**
+> git reset HASH
+- **Remove o commit para o commit passado com HASH, no mínimo tem que pegar o anterior**
+    - **volta commit pra stage area**
+    > git reset --soft HASH
+    - **volta commit para ADD**
+    > git reset --mixed HASH
+    - **Remove commit e modificações**
+    > git reset --hard HASH
+
+##
+
+## Ao Criar repositório no GitHub
+### …or create a new repository on the command line
+
+```
+echo "# vite-react-mui" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/andresgois/vite-react-mui.git
+git push -u origin main
+```
+
+### …or push an existing repository from the command line
+```
+git remote add origin https://github.com/andresgois/vite-react-mui.git
+git branch -M main
+git push -u origin main
+```
 
 ## Referências
 [Willian Justen Cursos- Curso de Git básico](https://www.youtube.com/watch?v=g2uviTb8ZpE&list=PLlAbYrWSYTiPA2iEiQ2PF_A9j__C4hi0A&index=14&ab_channel=WillianJustenCursos)
