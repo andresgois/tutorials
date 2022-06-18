@@ -19,3 +19,8 @@
 ## Docker
 [Docker](./Docker.md)
 
+## Curso DotNet
+[.NET](./Curso_DotNet/README.md)
+
+## Deploy de Aplicação usando CI/CD
+[Deploy](./Deploy.md)
