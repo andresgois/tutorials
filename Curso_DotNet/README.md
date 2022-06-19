@@ -8,6 +8,9 @@
 
 - Verificar a versão
 - **dontnet --version**
+- Templates
+- **dotnet new**
+- **dotnet new --list**
 
 ### Visual Studio 2022
 
@@ -67,5 +70,17 @@
 
 ![Instalação no arquivo](./imagem/img02.png)
 
-[Mais informações](https://www.connectionstrings.com/mysql/)
+[Mais informações sobre Connection Strings](https://www.connectionstrings.com/mysql/)
 
+## Criando projeto
+- mkdir projetos
+- cd projetos
+- dotnet new webapi -o api1
+- cd api1
+- **Executar o projeto**
+- dotnet run
+
+## Introdução C#
+[Introdução C#](./Introducao.md)
+## Lógica usando C#
+[Lógica](./Logica.md)
