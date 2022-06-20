@@ -31,7 +31,7 @@
     - Lambdas
     - Dynamic Object
 - **Não disponíveis**
-    - Renomear eementos
+    - Renomear elementos
     - Remoção de namespaces, tipos e membros
     - Modificaçõa de interfaces
     - Modificações de assinaturas de método
