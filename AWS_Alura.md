@@ -3,7 +3,6 @@
 ## Acessando o Dashboard
 
 - aws console
--
 
 ### IAM
 
