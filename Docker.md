@@ -13,6 +13,24 @@
 - docker version
 - Status do Docker
     - systemctl status docker
+- Se der error de:
+```
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+```
+- verifique se o docker esta rodando
+	- sudo service docker status
+	- sudo service docker start
+- Rode o seguinte comando: **docker ps**
+- Caso apresente o erro de 
+```
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json": dial unix /var/run/docker.sock: connect: permission denied
+```
+- Tem que criar um grupo e um usuário para o docker
+	- criar grupo: **sudo groupadd docker**
+	- Criar usuário e adicionar ao grupo: **sudo usermod -aG docker $USER**
+	- e por último: **newgrp docker**
+- docker ps
+
 
 ### Instalando Docker no Windows
 - Power Shell como administrador
