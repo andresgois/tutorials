@@ -391,6 +391,20 @@ ENTRYPOINT ./app.go
 
 
 ## DOCKER COMPOSER
+
+### Instalação
+- Pré-requisitos
+  - Docker Compose requires Docker Engine.
+  - Docker Compose plugin requires Docker CLI.
+- Atualizar linux
+  sudo apt-get update
+- Instalação
+  - sudo apt-get install docker-compose-plugin 	
+- Versão do compose
+  - docker compose version
+- [Referência](https://docs.docker.com/compose/install/)
+
+### Definição
 - Docker Compose é uma ferramenta desenvolvida para ajudar a definir e compartilhar aplicativos com vários contêiners. Com o compose, você pode criar um arquivo YAML para definir os serviços e com um único comando, pode rodar todos os contêinrs ou para-los.
 - [Versão do Docker](https://docs.docker.com/compose/compose-file/compose-versioning/)
 
