@@ -72,8 +72,15 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 - Executa o container por 10 segundos
     - docker run ubuntu sleep 10
 - executa o container e já entra dentro dele
-    - docker run -it ubuntu 
+    - docker run -it ubuntu
+    
 
+###  Inspecionado conatiner
+```
+ docker inspect <nome-container> | grep -i mem
+```
+- Exemplo:
+    -  docker inspect pep | grep -i mem
 ### Executando aplicações no container
 - docker --help
 - docker run -dti ubuntu
@@ -113,6 +120,7 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 - docker inspect mysql-container
 ![Inspect do container](./imagens/docker/inspect_mysql_mounts.png)
 - mysql -u root -p --protocol=tcp
+
 
 ### Acessando container externamente
 - Dentro do bash do container
