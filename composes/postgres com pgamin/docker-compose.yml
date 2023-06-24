@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:12-alpine3.17
+    container_name: curso-postgres
+    environment:
+      POSTGRES_PASSWORD: "123456"
+      POSTGRES_DB: cursodb
+    ports:
+      - "5432:5432"
+    volumes:
+      - /home/dev/volume-postgres:/var/lib/postgresql/data 
+    networks:
+      - curso-postgresrd
+      
+  teste-pgadmin-compose:
+    image: dpage/pgadmin4
+    container_name: pgadmin-curso-postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "postgres@email.com.br"
+      PGADMIN_DEFAULT_PASSWORD: "1234567"
+    ports:
+      - "15432:80"
+    depends_on:
+      - postgres
+    networks:
+      - curso-postgresrd
+
+networks: 
+  curso-postgresrd:
+    driver: bridge
