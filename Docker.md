@@ -1,13 +1,27 @@
-
 # Docker
+
+- [Instalação Docker](#anc1)
+- [Ações com as imagens](#anc2)
+- [Transferência de dados](#anc3)
+- [Banco de dados em container](#anc4)
+- [Volumes](#anc5)
+- [Administração do container](#anc6)
 
 ### O que é Docker
 - É uma containerização para criação de containers Linux
+
+<a name="anc1"></a>
+
+## Instalação Docker
 
 ### Instalar docker no Linux
 - [Referência](https://docs.docker.com/engine/install/ubuntu/)
 - Vê versão do linux
     - cat /etc/\*realease\*
+- Para a instalação, basta seguir a documentação abaixo: 
+- [Página de instalação](https://docs.docker.com/engine/install/ubuntu/)
+
+#### Instalando através de Script
 - curl -fsSL https://get.docker.com -o get-docker.sh
 - sudo sh get-docker.sh
 - docker version
@@ -56,7 +70,9 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 - [Instalar o Docker no Windows](https://docs.docker.com/desktop/windows/install/#system-requirements-for-wsl-2-backend)
 - [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
 
+<a name="anc2"></a>
 
+## Ações com as imagens
 ### Baixando imagem
 - [docker hub](https://hub.docker.com/)
 - docker pull hello-world
@@ -95,6 +111,10 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 ### Dando um nome ao container
 - docker container run -dti --name my-linux ubuntu
 
+<a name="anc3"></a>
+
+## Transferência de dados
+
 ### Copiando arquivo local para container
 - Cria diretório dentro do container sem abrir o bash
     - docker exec my-linux mkdir /destino
@@ -106,6 +126,9 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 ### Tags
 - docker pull debian:9
 
+<a name="anc4"></a>
+
+## Banco de dados em container
 ### Criando container com MySql
 - docker pull mysql
 - docker run -e MYSQL_ROOT_PASSWORD=123456 --name mysql-container -d -p 3306:3306 mysql
@@ -141,7 +164,7 @@ Got permission denied while trying to connect to the Docker daemon socket at uni
 - docker container stop mysql-A
 - docker container start mysql-A
 
-## Banco com Volume
+### Banco com Volume
 #### Mesmo excluido os containers, eles podem ser recuperados apenas apontando para o mesmo caminho onde os dados foram gravados
 - docker run -e MYSQL_ROOT_PASSWORD=Senha123 --name mysql-A -d -p 3306:3306 --volume=/data:/var/lib/mysql mysql
 - WINDOWS
@@ -164,7 +187,10 @@ VALUES
 - Remove container em execução, sem a necessidade de parar e depois remover
     - docker rm -f id_container
 
-### Volumes
+
+<a name="anc5"></a>
+
+## Volumes
 #### Definição
 - Basicamente, temos 3 tipos de volumes ou montagens para dados persistentes:
     * Bind mounts
@@ -248,7 +274,10 @@ phpinfo();
     - docker stats nome-container
 
 
-## Limitando memória e CPU
+<a name="anc6"></a>
+
+## Administração do container
+### Limitando memória e CPU
 ![Uso de memória](./imagens/docker/limit_memory.png)
 - sair, aperte CRTL+C
 - docker stats php-A
