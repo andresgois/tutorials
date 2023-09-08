@@ -24,3 +24,9 @@
 
 ## Deploy de Aplicação usando CI/CD
 [Deploy](./Deploy.md)
+
+## GitLab CI
+[GitLab](./GitLab/README.md)
+
+## Jenkins e Docker: Pipeline de entrega continua
+[Jenkins](./Jenkins/README.md)
