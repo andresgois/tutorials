@@ -82,13 +82,13 @@ Vagrant.configure("2") do |config|
   $script_mysql = <<-SCRIPT
     apt-get update && \
     apt-get install -y openjdk-8-jdk  mysql-server-5.7 && \
-    mysql -e "create user 'devops'@'%' identified by 'mestre';"  && \
-    mysql -e "create user 'devops_dev'@'%' identified by 'mestre';"  && \
+    mysql -e "create user 'devops'@'127.0.0.1' identified by 'mestre';"  && \
+    mysql -e "create user 'devops_dev'@'127.0.0.1' identified by 'mestre';"  && \
     mysql -e "create database todo;" && \
     mysql -e "create database todo_dev;" && \
     mysql -e "create database test_todo_dev;" && \
-    mysql -e "grant all privileges on *.* to devops@'%' identified by 'mestre';" && \
-    mysql -e "grant all privileges on *.* to devops_dev@'%' identified by 'mestre';" 
+    mysql -e "grant all privileges on *.* to devops@'127.0.0.1' identified by 'mestre';" && \
+    mysql -e "grant all privileges on *.* to devops_dev@'127.0.0.1' identified by 'mestre';" 
   SCRIPT
   config.vm.provision "shell", inline: $script_mysql
   config.vm.provision "shell",

@@ -76,8 +76,11 @@ sudo service jenkins stop && sudo service jenkins start && sudo service jenkins 
         # Baixar e descompactar o arquivo 1110-aula-inicial.zip
         # Entendendo o Vagranfile
         # Subindo o ambiente virtualizado
+            # Aumenta tamanho do disco
             vagrant plugin install vagrant-disksize
+            # Provisiona a máquina, ler o vangrantfile
             vagrant up
+            # Loga na máquina
             vagrant ssh
                 ps -ef | grep -i mysql # Verificando se o MySQL esta rodando
                 mysql -u devops -p # Senha mestre; show databases
@@ -87,7 +90,7 @@ sudo service jenkins stop && sudo service jenkins start && sudo service jenkins 
                 # Visualizar o conteudo do arquivo de instalacao do jenkins
                     sudo ./jenkins.sh
 
-                # Acessar:  192.168.56.10:8080
+                # Acessar:  http://192.168.56.10:8080/
                     sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
                 # Credenciais
@@ -108,3 +111,5 @@ sudo service jenkins stop && sudo service jenkins start && sudo service jenkins 
 - Acessar banco: `mysql -u devops_dev -p ` senha `mestre`
 - Acessar banco: `mysql -u devops -p ` senha `mestre`
  
+ > O que é Jenkins?
+ - O Jenkins é um servidor de Integração Contínua open-source escrito em Java. Ele é o mais popular mas não a única opção. Outros servidores de *Integração Contínua * são TeamCity, Bamboo, Travis CI ou Gitlab CI entre vários outros.

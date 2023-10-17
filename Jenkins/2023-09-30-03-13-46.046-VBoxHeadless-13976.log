@@ -1,0 +1,12 @@
+Log created: 2023-09-30T03:13:46.462571000Z
+Process ID:  13976 (0x3698)
+Parent PID:  6322 (0x18b2)
+Executable:  /usr/lib/virtualbox/VBoxHeadless
+Arg[0]: /usr/lib/virtualbox/VBoxHeadless
+Arg[1]: --comment
+Arg[2]: Jenkins_default_1694191197373_39303
+Arg[3]: --startvm
+Arg[4]: 8e4ca730-e5c8-41f6-8012-44ed3aef6618
+Arg[5]: --vrde
+Arg[6]: config
+AddRef: illegal refcnt=3221225469 state=2
