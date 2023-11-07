@@ -25,3 +25,25 @@ sudo usermod -aG docker $USER
     - docker inspect f589ccde7957
 - Lista Camadas
     - docker history f589ccde7957
+
+### Desmenbrando o Dockerfile
+```
+FROM node:14
+WORKDIR /app-node
+COPY . .
+RUN npm install
+ENTRYPOINT npm start
+```
+#### Explicando
+    - de onde é a imagem: vem do repositorio dockerhub
+    - diretório padrão dentro do container, tudo abaixo será feito dentro dele
+    - copia tudo do diretorio onde foi executado o comando para o diretorio padrão do container
+    - faz execução do comando, será excutado na etapa de criação da imagem
+    - comando executado após criação da imagem
+    - Executando o Dockerfile 
+        - *docker build . -t nome-imagem:tag*
+    - Executando a imagem
+        - *docker run -d -p 8080:3000 nome-imagem:tag
+## Referências
+
+- [Dockerfile referencia](https://docs.docker.com/engine/reference/builder/)
