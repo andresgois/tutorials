@@ -36,16 +36,93 @@ ENTRYPOINT npm start
 
 - Temos o **volume** efetivamente, que será gerenciado pelo Docker. Mas vamos entender tudo isso em mais detalhes. E tem o **tmpfs**, que é temporário. Mas vamos entender a utilidade dele também.
 
+### bind mount
+- docker run -it -v /home/andre/volume-docker:/app ubuntu bash
+- docker run -it --mount type=bind,source=/home/andre/volume-docker,target=/app ubuntu bash
 
-
+### volumes
 > Criando volume
 - docker volume create meu-volume
+- docker run -it -v meu-volume:/app ubuntu bash
+> Pasta onde fica os volumes criados no docker 
+- sudo ls -la /var/lib/docker/volumes/meu-volume/_data
+- docker run -it --mount source=meu-volume,target=/app ubuntu bash
+
+### tmpfs
+> Armazenamento temporário
+- docker run -it --tmpfs=/app ubuntu bash
+
 
 > Com o volume criado, agora iremos executar um novo container vinculado ao volume. Para isso, execute o comando docker run -it -v meu-volume:/app ubuntu bash
 
 > A rede host remove o isolamento entre o container e o sistema, enquanto a rede none remove a interface de rede.
 
-## Comunicação de containers
+## Redes
+### Comunicação de containers
+> Redes do tipo **brigde** conseguem se comunicar
+
+- Criando rede
+- docker network create my-rede
+- docker container run -d --name linux1 --network my-rede ubuntu
+- docker inspect linux
+```
+"NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "45864067eae131cb7db00e2ff8ad17e056bba84b6a804a96e087fe5828e6bb29",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/45864067eae1",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "my-rede": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "25887b433321"
+                    ],
+                    "NetworkID": "ca9f3b3505fcaa5a4715af0b7134c80d3c22a5c19ab2c44614d83f41f747971c",
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "",
+                    "DriverOpts": null
+                }
+            }
+        }
+
+```
+
+- docker container run -it --name linux1 --network my-rede ubuntu
+- docker container run -d --name linux2 --network my-rede ubuntu sleep 1d
+- entre no container linux1
+    - docker exec -it linux1 bash
+    - apt-get update
+    - apt-get install iputils-ping -y
+    - ping linux2
+> Rede nano
+- Não tem nenhum interface de rede associada
+> Rede host
+- Usa a mesma interface de rede do hospedeiro
+
+## Conectando aplicação ao banco via linha de comando
+- docker run -d --network minha-bridge --name meu-mongo mongo:4.4.6
+- docker container run -d --name alurabooks --network my-rede -p 3000:3000 aluradocker/alura-books:1.0
+
 - Agora iremos executar dois containers criados em uma mesma rede customizada, a fim de comunicar e trafegar informações entre uma aplicação e um banco de dados. Anteriormente, vimos que o papel da rede bridge é possibilitar a comunicação entre containers em um mesmo host. Chegou o momento de pôr isso em prática.
 
 - Inicialmente, abra o terminal e execute o comando docker network ls. Caso ainda não tenha criado a rede minha-bridge, execute o comando docker network create --driver bridge minha-bridge.
@@ -56,3 +133,8 @@ ENTRYPOINT npm start
 
 - Em seu navegador, acesse a url localhost:3000 e veja que foi possível carregar a página da aplicação. Para que os dados sejam carregados e armazenados no banco, acesse localhost:3000/seed e, em seguida, recarregue a página localhost:3000. Veja que as informações agora estão sendo exibidas por conta da comunicação entre aplicação e banco de dados.
 
+- [Página inicial](http://localhost:3000)
+- [Página que popula os dados](http://localhost:3000/seed)
+
+## Coordenando containers
+- [Instalando o docker-compose](https://docs.docker.com/compose/install/linux/)
